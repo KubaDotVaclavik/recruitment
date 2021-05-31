@@ -102,7 +102,7 @@ PATCH /api/v1/jobAds/{id}
 DELETE /api/v1/jobAds/{id}
 ```
 
-## #Job application
+## #Job applications
 
 ```yml
 GET /api/v1/jobApplications/{id}
