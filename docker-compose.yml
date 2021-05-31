@@ -1,0 +1,28 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: recruitment
+    # volumes:
+    #   - ./pgdata:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+
+  api:
+    image: recruitment
+    build: .
+    ports:
+      - 4000:4000
+    environment:
+      NODE_ENV: development
+    command: >
+      sh -c "npx prisma db push &&
+             npm run dev"
+    volumes:
+      - ./src:/recruitment/src
+    depends_on:
+      - db
