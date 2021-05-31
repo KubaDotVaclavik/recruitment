@@ -1,8 +1,5 @@
 # files
-lerna-debug.log
-yarn-debug.log
 npm-debug.log
-yarn-error.log
 npm-error.log
 tsconfig.tsbuildinfo
 .vscode/settings.json
