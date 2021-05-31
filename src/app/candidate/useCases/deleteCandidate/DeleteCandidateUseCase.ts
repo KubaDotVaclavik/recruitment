@@ -38,9 +38,7 @@ export class DeleteCandidateUseCase
         return left(new AppError.UnexpectedError("Delete failed"));
       }
 
-      await this.candidateRepository.save(candidate);
-
-      return right(Result.ok<void>());
+      return this.candidateRepository.save(candidate);
     } catch (err) {
       return left(new AppError.UnexpectedError(err));
     }

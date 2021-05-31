@@ -77,7 +77,7 @@ export class CreateCandidateUseCase
 
       if (candidateAlreadyExists) {
         return left(
-          new CreateCandidateErrors.FullNameTakenError(fullName.value)
+          CreateCandidateErrors.FullNameTakenError.create(fullName.value)
         );
       }
 
@@ -93,9 +93,7 @@ export class CreateCandidateUseCase
 
       const candidate = candidateOrError.right.value;
 
-      await this.candidateRepository.save(candidate);
-
-      return right(Result.ok<void>());
+      return this.candidateRepository.save(candidate);
     } catch (err) {
       return left(new AppError.UnexpectedError(err));
     }

@@ -1,14 +1,14 @@
-import { CandidateRepositoryErrors } from "../../repositories/CandidateRepositoryErrors";
+import { JobApplicationRepositoryErrors } from "../../repositories/JobApplicationRepositoryErrors";
 import { Controller } from "../../../../core/utils/Controller";
-import { DeleteCandidateRequestDTO } from "./DeleteCandidateRequestDTO";
-import { DeleteCandidateUseCase } from "./DeleteCandidateUseCase";
+import { DeleteJobApplicationRequestDTO } from "./DeleteJobApplicationRequestDTO";
+import { DeleteJobApplicationUseCase } from "./DeleteJobApplicationUseCase";
 import { isLeft } from "fp-ts/lib/Either";
 import { Response, Request } from "express";
 
-export class DeleteCandidateController extends Controller {
-  private useCase: DeleteCandidateUseCase;
+export class DeleteJobApplicationController extends Controller {
+  private useCase: DeleteJobApplicationUseCase;
 
-  constructor(useCase: DeleteCandidateUseCase) {
+  constructor(useCase: DeleteJobApplicationUseCase) {
     super();
     this.useCase = useCase;
   }
@@ -20,7 +20,7 @@ export class DeleteCandidateController extends Controller {
       return this.clientError(res, `Parametr "id" is required`);
     }
 
-    const dto: DeleteCandidateRequestDTO = { id };
+    const dto: DeleteJobApplicationRequestDTO = { id };
 
     try {
       const result = await this.useCase.execute(dto);
@@ -29,7 +29,7 @@ export class DeleteCandidateController extends Controller {
         const error = result.left;
 
         switch (error.constructor) {
-          case CandidateRepositoryErrors.CandidateNotFoundError:
+          case JobApplicationRepositoryErrors.JobApplicationNotFoundError:
             return this.notFound(res, error.value);
           default:
             return this.fail(res, error.value);

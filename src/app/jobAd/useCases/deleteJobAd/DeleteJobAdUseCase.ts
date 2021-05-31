@@ -38,9 +38,7 @@ export class DeleteJobAdUseCase
         return left(new AppError.UnexpectedError("Delete failed"));
       }
 
-      await this.jobAdRepository.save(jobAd);
-
-      return right(Result.ok<void>());
+      return this.jobAdRepository.save(jobAd);
     } catch (err) {
       return left(new AppError.UnexpectedError(err));
     }

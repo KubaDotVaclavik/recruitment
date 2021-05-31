@@ -8,28 +8,30 @@ generator client {
 }
 
 model Candidate {
-  id          String        @id @default(uuid())
-  createdAt   DateTime      @default(now())
-  fullName    String        @unique
+  id          String           @id @default(uuid())
+  createdAt   DateTime         @default(now())
+  fullName    String           @unique
   salary      Int?
   skills      String
-  Application Application[]
+  Application JobApplication[]
 }
 
 model JobAd {
-  id          String        @id @default(uuid())
-  createdAt   DateTime      @default(now())
+  id          String           @id @default(uuid())
+  createdAt   DateTime         @default(now())
   title       String
   salary      Int?
   text        String
-  Application Application[]
+  Application JobApplication[]
 }
 
-model Application {
+model JobApplication {
   id          String    @id @default(uuid())
   createdAt   DateTime  @default(now())
   candidate   Candidate @relation(fields: [candidateId], references: [id])
   candidateId String
   jobAd       JobAd     @relation(fields: [jobAdId], references: [id])
   jobAdId     String
+
+  @@unique([candidateId, jobAdId])
 }

@@ -73,9 +73,7 @@ export class CreateJobAdUseCase
 
       const jobAd = jobAdOrError.right.value;
 
-      await this.jobAdRepository.save(jobAd);
-
-      return right(Result.ok<void>());
+      return this.jobAdRepository.save(jobAd);
     } catch (err) {
       return left(new AppError.UnexpectedError(err));
     }

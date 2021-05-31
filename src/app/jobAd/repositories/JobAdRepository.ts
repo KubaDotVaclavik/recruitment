@@ -38,7 +38,7 @@ export class JobAdRepository {
     where?: IJobAdsWhere;
   }): Promise<Either<AppError.DomainConsistencyError, Result<JobAd>[]>> {
     const offset: number = props?.offset || 0;
-    const limit: number = props?.limit || 5;
+    const limit: number = Math.max(props?.limit || 5, 50);
     const where = JobAdRepository.buildJobAdsWhere(props?.where);
 
     const rawJobAds = await this.prisma.jobAd.findMany({
@@ -68,7 +68,6 @@ export class JobAdRepository {
     >
   > {
     const rawJobAd = await this.prisma.jobAd.findUnique({ where });
-
     if (rawJobAd === null) {
       return left(new JobAdRepositoryErrors.JobAdNotFoundError());
     }
@@ -90,24 +89,32 @@ export class JobAdRepository {
     return Boolean(found);
   }
 
-  public async save(jobAd: JobAd) {
-    const exists = await this.exists(jobAd);
+  public async save(
+    jobAd: JobAd
+  ): Promise<Either<AppError.UnexpectedError, Result<void>>> {
+    try {
+      const exists = await this.exists(jobAd);
 
-    if (exists && jobAd.isDeleted()) {
-      return this.prisma.jobAd.delete({
-        where: { id: jobAd.id.toValue() },
-      });
-    }
+      if (exists && jobAd.isDeleted()) {
+        await this.prisma.jobAd.delete({
+          where: { id: jobAd.id.toValue() },
+        });
+        return right(Result.ok<void>());
+      }
 
-    if (exists) {
-      const data = JobAdMap.toPersistence(jobAd);
-      return this.prisma.jobAd.update({
-        where: { id: jobAd.id.toValue() },
-        data,
-      });
-    } else {
-      const data = JobAdMap.toPersistence(jobAd);
-      return this.prisma.jobAd.create({ data });
+      if (exists) {
+        const data = JobAdMap.toPersistence(jobAd);
+        await this.prisma.jobAd.update({
+          where: { id: jobAd.id.toValue() },
+          data,
+        });
+      } else {
+        const data = JobAdMap.toPersistence(jobAd);
+        await this.prisma.jobAd.create({ data });
+      }
+      return right(Result.ok<void>());
+    } catch (err) {
+      return left(AppError.UnexpectedError.create(err));
     }
   }
 }

@@ -39,7 +39,7 @@ export class CandidateRepository {
     where?: ICandidatesWhere;
   }): Promise<Either<AppError.DomainConsistencyError, Result<Candidate>[]>> {
     const offset: number = props?.offset || 0;
-    const limit: number = props?.limit || 5;
+    const limit: number = Math.max(props?.limit || 5, 50);
     const where = CandidateRepository.buildCandidatesWhere(props?.where);
 
     const rawCandidates = await this.prisma.candidate.findMany({
@@ -104,24 +104,32 @@ export class CandidateRepository {
     return Boolean(found);
   }
 
-  public async save(candidate: Candidate) {
-    const exists = await this.exists(candidate);
+  public async save(
+    candidate: Candidate
+  ): Promise<Either<AppError.UnexpectedError, Result<void>>> {
+    try {
+      const exists = await this.exists(candidate);
 
-    if (exists && candidate.isDeleted()) {
-      return this.prisma.candidate.delete({
-        where: { id: candidate.id.toValue() },
-      });
-    }
+      if (exists && candidate.isDeleted()) {
+        await this.prisma.candidate.delete({
+          where: { id: candidate.id.toValue() },
+        });
+        return right(Result.ok<void>());
+      }
 
-    if (exists) {
-      const data = CandidateMap.toPersistence(candidate);
-      return this.prisma.candidate.update({
-        where: { id: candidate.id.toValue() },
-        data,
-      });
-    } else {
-      const data = CandidateMap.toPersistence(candidate);
-      return this.prisma.candidate.create({ data });
+      if (exists) {
+        const data = CandidateMap.toPersistence(candidate);
+        await this.prisma.candidate.update({
+          where: { id: candidate.id.toValue() },
+          data,
+        });
+      } else {
+        const data = CandidateMap.toPersistence(candidate);
+        await this.prisma.candidate.create({ data });
+      }
+      return right(Result.ok<void>());
+    } catch (err) {
+      return left(AppError.UnexpectedError.create(err));
     }
   }
 }

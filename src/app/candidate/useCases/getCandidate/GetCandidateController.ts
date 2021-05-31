@@ -18,6 +18,10 @@ export class GetCandidateController extends Controller {
   async execute(req: Request, res: Response): Promise<any> {
     const { id } = req.params;
 
+    if (!id) {
+      return this.clientError(res, `Parametr "id" is required`);
+    }
+
     const dto: GetCandidateRequestDTO = {
       id: String(id),
     };
