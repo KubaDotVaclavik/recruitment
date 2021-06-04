@@ -39,7 +39,7 @@ export class CandidateRepository {
     where?: ICandidatesWhere;
   }): Promise<Either<AppError.DomainConsistencyError, Result<Candidate>[]>> {
     const offset: number = props?.offset || 0;
-    const limit: number = Math.max(props?.limit || 5, 50);
+    const limit: number = Math.min(props?.limit || 5, 50);
     const where = CandidateRepository.buildCandidatesWhere(props?.where);
 
     const rawCandidates = await this.prisma.candidate.findMany({

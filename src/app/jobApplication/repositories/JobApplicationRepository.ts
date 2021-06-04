@@ -23,7 +23,7 @@ export class JobApplicationRepository {
     Either<AppError.DomainConsistencyError, Result<JobApplication>[]>
   > {
     const offset: number = props?.offset || 0;
-    const limit: number = Math.max(props?.limit || 5, 50);
+    const limit: number = Math.min(props?.limit || 5, 50);
 
     const rawjobApplications = await this.prisma.jobApplication.findMany({
       skip: offset,

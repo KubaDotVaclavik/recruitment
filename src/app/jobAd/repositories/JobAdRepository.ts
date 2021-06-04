@@ -38,7 +38,7 @@ export class JobAdRepository {
     where?: IJobAdsWhere;
   }): Promise<Either<AppError.DomainConsistencyError, Result<JobAd>[]>> {
     const offset: number = props?.offset || 0;
-    const limit: number = Math.max(props?.limit || 5, 50);
+    const limit: number = Math.min(props?.limit || 5, 50);
     const where = JobAdRepository.buildJobAdsWhere(props?.where);
 
     const rawJobAds = await this.prisma.jobAd.findMany({
