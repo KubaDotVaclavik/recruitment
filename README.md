@@ -2,7 +2,7 @@
 
 ## About
 
-Recruitment API is a sample project, that was created with regard to the principles of DDD. Most of it is described in an amazing blog [khalilstemmler.com](https://khalilstemmler.com/articles/categories/domain-driven-design/)
+Recruitment API is a sample project, that was created with regard to the principles of DDD. Most of it is described in the amazing blog [khalilstemmler.com](https://khalilstemmler.com/articles/categories/domain-driven-design/)
 
 ## How to run
 
